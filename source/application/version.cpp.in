@@ -1,0 +1,3 @@
+#include "version.h"
+
+QString const GIT_VERSION = "@GIT_VERSION@";
