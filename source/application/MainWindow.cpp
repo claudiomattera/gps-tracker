@@ -4,8 +4,12 @@
 #include <QMessageBox>
 #include <QCoreApplication>
 
+#include <QSettings>
+
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
+
+#include "GpxModel.h"
 
 W_OBJECT_IMPL(MainWindow)
 
@@ -14,6 +18,11 @@ MainWindow::MainWindow(QWidget * parent)
 , ui(new Ui::MainWindow)
 {
     this->ui->setupUi(this);
+
+    QSettings settings;
+    QDir directory(settings.value("directory").toString());
+    QAbstractItemModel * model = new GpxModel(directory);
+    this->ui->gpxView->setModel(model);
 }
 
 MainWindow::~MainWindow()

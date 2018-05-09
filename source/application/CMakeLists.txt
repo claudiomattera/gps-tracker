@@ -15,7 +15,14 @@ find_package(Qt5Widgets)
 find_package(Qt5Location)
 find_package(Qt5QuickWidgets)
 
-add_executable(gps-tracker WIN32 main.cpp MainWindow.cpp ${version_file})
+add_executable(
+    gps-tracker
+    WIN32
+    main.cpp
+    MainWindow.cpp
+    GpxModel.cpp
+    ${version_file}
+)
 
 target_link_libraries(
     gps-tracker
