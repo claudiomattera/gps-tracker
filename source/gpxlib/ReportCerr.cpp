@@ -45,17 +45,17 @@ namespace gpx
   {
     if (node != nullptr)
     {
-      cerr << (node->getType() == Node::ATTRIBUTE ? "Attribute " : "Element ") << node->getName() << " : ";
+      // cerr << (node->getType() == Node::ATTRIBUTE ? "Attribute " : "Element ") << node->getName() << " : ";
     }
 
-    cerr << Report::text(warning);
+    // cerr << Report::text(warning);
 
     if (!extra.empty())
     {
-      cerr << ": " << extra;
+      // cerr << ": " << extra;
     }
 
-    cerr << "." << endl;
+    // cerr << "." << endl;
   }
 }
 
