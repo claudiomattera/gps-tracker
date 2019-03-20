@@ -1,14 +1,15 @@
 
 #pragma once
 
-#ifndef GPX_MODEL_H
-#define GPX_MODEL_H
+#ifndef APPLICATION_GPX_MODEL_H
+#define APPLICATION_GPX_MODEL_H
 
 #include <QAbstractListModel>
 
 #include <QModelIndex>
 #include <QDir>
-#include <QFileInfoList>
+#include <QList>
+#include "GpxItem.h"
 
 class GpxModel: public QAbstractListModel
 {
@@ -17,11 +18,13 @@ public:
 
     virtual int columnCount(QModelIndex const & parent = QModelIndex()) const;
     virtual QVariant data(QModelIndex const & index, int role = Qt::DisplayRole) const;
+    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     virtual int rowCount(QModelIndex const & parent = QModelIndex()) const;
 
 private:
     QDir directory;
-    QFileInfoList files;
+    QList<GpxItem> gpxs;
+    QList<QString> headers;
 };
 
-#endif // GPX_MODEL_H
+#endif // APPLICATION_GPX_MODEL_H

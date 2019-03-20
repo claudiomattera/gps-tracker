@@ -21,12 +21,17 @@ add_executable(
     main.cpp
     MainWindow.cpp
     GpxModel.cpp
+    GpxItem.cpp
+    PathController.cpp
+    distance.cpp
+    places.qrc
     ${version_file}
 )
 
 target_link_libraries(
     gps-tracker
     verdigris
+    gpxlib
     Qt5::Widgets
     Qt5::QuickWidgets
     Qt5::Location

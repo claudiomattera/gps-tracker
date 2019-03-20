@@ -1,8 +1,8 @@
-#ifndef VERSION_H
-#define VERSION_H
+#ifndef APPLICATION_VERSION_H
+#define APPLICATION_VERSION_H
 
 #include <QString>
 
 extern QString const GIT_VERSION;
 
-#endif // VERSION_H
+#endif // APPLICATION_VERSION_H
