@@ -9,10 +9,13 @@
 #include <QModelIndex>
 #include <QDir>
 #include <QList>
+#include <QFileInfo>
 #include "GpxItem.h"
 
 class GpxModel: public QAbstractListModel
 {
+    int const LOAD_WINDOW = 100;
+
 public:
     GpxModel(QDir const & directory);
 
@@ -21,7 +24,13 @@ public:
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     virtual int rowCount(QModelIndex const & parent = QModelIndex()) const;
 
+protected:
+    bool canFetchMore(const QModelIndex & parent) const;
+    void fetchMore(const QModelIndex & parent);
+
 private:
+    QFileInfoList files;
+    int loadedFiles;
     QDir directory;
     QList<GpxItem> gpxs;
     QList<QString> headers;

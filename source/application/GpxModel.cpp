@@ -7,18 +7,9 @@ GpxModel::GpxModel(QDir const & directory)
 {
     this->headers.append("Date");
     this->headers.append("Name");
-    int max = 10;
-    int i = 0;
-    QFileInfoList files = directory.entryInfoList({"*.gpx"});
-    for (QFileInfo file: files) {
-        if (i > max) {
-            break;
-        }
-        i += 1;
-        GpxItem gpxItem(file);
 
-        this->gpxs.append(gpxItem);
-    }
+    this->files = directory.entryInfoList({"*.gpx"});
+    this->loadedFiles = 0;
 }
 
 int GpxModel::columnCount(QModelIndex const & parent) const
@@ -73,4 +64,35 @@ int GpxModel::rowCount(QModelIndex const & parent) const
     } else {
         return this->gpxs.size();
     }
+}
+
+bool GpxModel::canFetchMore(const QModelIndex & parent) const
+{
+    return this->loadedFiles < this->files.size();
+}
+
+void GpxModel::fetchMore(const QModelIndex & parent)
+{
+    int remainder = this->files.size() - this->loadedFiles;
+    int filesToLoad = std::min(GpxModel::LOAD_WINDOW, remainder);
+
+    if (filesToLoad <= 0) {
+        return;
+    }
+
+    qDebug() << "Adding " << filesToLoad << " files";
+
+    beginInsertRows(QModelIndex(), this->loadedFiles, this->loadedFiles + filesToLoad - 1);
+
+    for (int i = this->loadedFiles; i < this->loadedFiles + filesToLoad; ++i) {
+        QFileInfo file = this->files.at(i);
+        GpxItem gpxItem(file);
+        this->gpxs.append(gpxItem);
+    }
+
+    this->loadedFiles += filesToLoad;
+
+    endInsertRows();
+
+    qDebug() << "loaded " << this->loadedFiles << " files of " << this->files.size();
 }
