@@ -2,6 +2,8 @@
 
 #include <wobjectimpl.h>
 
+#include <QSettings>
+
 #include <QtDebug>
 
 W_OBJECT_IMPL(GpxModel)
@@ -116,17 +118,26 @@ void GpxModel::fetchMore(const QModelIndex & parent)
         return;
     }
 
-    qDebug() << "Adding " << filesToLoad << " files";
+    QList<GpxItem> items;
 
-    beginInsertRows(QModelIndex(), this->loadedFiles, this->loadedFiles + filesToLoad - 1);
+    qDebug() << "Loading " << filesToLoad << " files";
+
+    QSettings settings;
 
     for (int i = this->loadedFiles; i < this->loadedFiles + filesToLoad; ++i) {
         QFileInfo file = this->files.at(i);
-        GpxItem gpxItem(file);
-        this->gpxs.append(gpxItem);
+        std::optional<GpxItem> gpxItem = GpxItem::load(file, settings);
+        if (gpxItem) {
+            items.append(gpxItem.value());
+        }
     }
-
     this->loadedFiles += filesToLoad;
+
+    qDebug() << "Adding " << filesToLoad << " entries";
+
+    beginInsertRows(QModelIndex(), this->loadedFiles, this->loadedFiles + items.size() - 1);
+
+    this->gpxs.append(items);
 
     endInsertRows();
 
