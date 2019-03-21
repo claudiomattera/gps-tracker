@@ -3,11 +3,11 @@
 
 #include <wobjectdefs.h>
 
+#include <QGeoPositionInfoSource>
 #include <QGeoPath>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include <QTimer>
 
 class PathController: public QObject {
     // Q_OBJECT

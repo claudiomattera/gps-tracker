@@ -15,6 +15,7 @@ Rectangle {
         anchors.fill: parent
         plugin: osmMapPlugin
         zoomLevel: 14
+        center: pathController.center
 
         MapPolyline {
             id: pl

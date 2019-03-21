@@ -23,7 +23,6 @@ add_executable(
     GpxModel.cpp
     GpxItem.cpp
     PathController.cpp
-    distance.cpp
     places.qrc
     ${version_file}
 )

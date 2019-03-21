@@ -17,7 +17,6 @@ class PathController;
 
 class MainWindow: public QMainWindow
 {
-    // Q_OBJECT
     W_OBJECT(MainWindow)
 
 public:
@@ -36,6 +35,9 @@ public slots:
 
     void on_gpxView_activated(const QModelIndex &index);
     W_SLOT(on_gpxView_activated)
+
+    void on_totalDistanceComputed(double totalDistanxe);
+    W_SLOT(on_totalDistanceComputed)
 
 private:
     Ui::MainWindow * ui;
