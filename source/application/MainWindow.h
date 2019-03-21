@@ -33,6 +33,9 @@ public slots:
     void on_aboutQtAction_triggered();
     W_SLOT(on_aboutQtAction_triggered)
 
+    void on_progressChartAction_triggered();
+    W_SLOT(on_progressChartAction_triggered)
+
     void on_gpxView_activated(const QModelIndex &index);
     W_SLOT(on_gpxView_activated)
 

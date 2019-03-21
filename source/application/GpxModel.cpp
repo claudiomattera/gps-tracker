@@ -52,6 +52,8 @@ QVariant GpxModel::data(QModelIndex const & index, int role) const
             return gpxItem.getGeoPath().length() / 1000;
         } else if (role == DescriptionRole) {
             return gpxItem.getName();
+        } else if (role == DateRole) {
+            return gpxItem.getDate();
         } else if (role == Qt::ToolTipRole) {
             return gpxItem.getFileInfo().fileName();
         }

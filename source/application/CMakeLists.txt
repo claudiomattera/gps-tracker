@@ -14,12 +14,14 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(Qt5Widgets)
 find_package(Qt5Location)
 find_package(Qt5QuickWidgets)
+find_package(Qt5Charts)
 
 add_executable(
     gps-tracker
     WIN32
     main.cpp
     MainWindow.cpp
+    ProgressDialog.cpp
     GpxModel.cpp
     GpxItem.cpp
     PathController.cpp
@@ -34,6 +36,7 @@ target_link_libraries(
     Qt5::Widgets
     Qt5::QuickWidgets
     Qt5::Location
+    Qt5::Charts
 )
 
 install(

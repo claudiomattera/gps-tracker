@@ -29,6 +29,9 @@
       <property name="alternatingRowColors">
        <bool>true</bool>
       </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::ContiguousSelection</enum>
+      </property>
       <property name="rootIsDecorated">
        <bool>false</bool>
       </property>
@@ -122,6 +125,9 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <addaction name="separator"/>
+    <addaction name="progressChartAction"/>
+    <addaction name="separator"/>
     <addaction name="quitAction"/>
    </widget>
    <widget class="QMenu" name="questionMarkMenu">
@@ -159,6 +165,11 @@
   <action name="aboutQtAction">
    <property name="text">
     <string>About &amp;Qt</string>
+   </property>
+  </action>
+  <action name="progressChartAction">
+   <property name="text">
+    <string>&amp;Progress Chart</string>
    </property>
   </action>
  </widget>

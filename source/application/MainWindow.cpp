@@ -1,6 +1,10 @@
 
 #include <wobjectimpl.h>
 
+#include <algorithm>
+#include <vector>
+#include <numeric>
+
 #include <QMessageBox>
 #include <QCoreApplication>
 #include <QModelIndex>
@@ -22,6 +26,7 @@
 
 #include "GpxModel.h"
 #include "PathController.h"
+#include "ProgressDialog.h"
 
 W_OBJECT_IMPL(MainWindow)
 
@@ -80,6 +85,48 @@ void MainWindow::on_aboutAction_triggered()
 void MainWindow::on_aboutQtAction_triggered()
 {
     QMessageBox::aboutQt(this);
+}
+
+void MainWindow::on_progressChartAction_triggered()
+{
+    QModelIndexList const indexes = this->ui->gpxView
+        ->selectionModel()
+        ->selectedRows();
+
+    if (indexes.isEmpty()) {
+        return;
+    }
+
+    QList<QPointF> points;
+
+    for (QModelIndex index: indexes) {
+        double distance = index.data(GpxModel::DistanceRole).toDouble();
+        QDate date = index.data(GpxModel::DateRole).toDate();
+        qint64 timestamp = QDateTime(date).toMSecsSinceEpoch();
+
+        QPointF point(timestamp, distance);
+        points.push_back(point);
+    }
+
+    std::sort(
+        std::begin(points),
+        std::end(points),
+        [](QPointF a, QPointF b) {
+            return a.x() < b.x();
+        });
+
+    QList<QPointF> cumulativePoints = std::accumulate(
+        std::begin(points) + 1,
+        std::end(points),
+        QList<QPointF>({points.first()}),
+        [](QList<QPointF> & cumulative, QPointF point) {
+            double const last = cumulative.last().y();
+            cumulative.append(QPointF(point.x(), point.y() + last));
+            return cumulative;
+        });
+
+    ProgressDialog progressDialog(cumulativePoints, this);
+    progressDialog.exec();
 }
 
 void MainWindow::on_gpxView_activated(const QModelIndex &index)

@@ -28,7 +28,8 @@ public:
         GeoPathRole = Qt::UserRole + 2,
         DurationRole = Qt::UserRole + 3,
         DescriptionRole = Qt::UserRole + 4,
-        DistanceRole = Qt::UserRole + 5
+        DistanceRole = Qt::UserRole + 5,
+        DateRole = Qt::UserRole + 6
     };
 
 public:
