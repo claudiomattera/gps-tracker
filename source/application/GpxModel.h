@@ -18,7 +18,7 @@ class GpxModel: public QAbstractListModel
 {
     W_OBJECT(GpxModel)
 
-    int const LOAD_WINDOW = 100;
+    int const LOAD_WINDOW = 10000;
 
 public:
     enum ItemDataRole

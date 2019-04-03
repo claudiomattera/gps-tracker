@@ -40,7 +40,7 @@ QVariant GpxModel::data(QModelIndex const & index, int role) const
                     return gpxItem.getName();
                 case 2:
                     return tr("%1 km")
-                        .arg(gpxItem.getGeoPath().length() / 1000, 0, 'f', 1);
+                        .arg(gpxItem.getDistance() / 1000, 0, 'f', 1);
             }
         } else if (role == FileInfoRole) {
             return gpxItem.getFileInfo().absoluteFilePath();
@@ -51,7 +51,7 @@ QVariant GpxModel::data(QModelIndex const & index, int role) const
         } else if (role == DurationRole) {
             return gpxItem.getDuration();
         } else if (role == DistanceRole) {
-            return gpxItem.getGeoPath().length() / 1000;
+            return gpxItem.getDistance() / 1000;
         } else if (role == DescriptionRole) {
             return gpxItem.getName();
         } else if (role == DateRole) {
@@ -99,7 +99,7 @@ bool GpxModel::canFetchMore(const QModelIndex & parent) const
     } else {
         double distance = 0;
         for (GpxItem gpx: this->gpxs) {
-            distance += gpx.getGeoPath().length();
+            distance += gpx.getDistance();
         }
         emit totalDistanceComputed(distance);
 

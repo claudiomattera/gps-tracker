@@ -1,10 +1,9 @@
 #include "GpxItem.h"
 
-#include <QFile>
-#include <QPointF>
-
 #include <QtDebug>
 #include <QSettings>
+
+#include <QCryptographicHash>
 
 #include <fstream>
 #include <memory>
@@ -18,22 +17,48 @@
 #include "gpx/Writer.h"
 #include "gpx/ReportCerr.h"
 
+namespace {
+
+QString computeCacheKey(QFileInfo const & fileInfo)
+{
+    QCryptographicHash hasher(QCryptographicHash::Sha3_512);
+    hasher.addData(fileInfo.absoluteFilePath().toUtf8());
+    return hasher.result().toHex();
+}
+
+} // unnamed namespace
+
 
 GpxItem::GpxItem(
         QString name,
         QDate date,
         QTime duration,
         QFileInfo fileInfo,
-        QGeoCoordinate center,
-        QGeoPath geopath
+        std::optional<QGeoCoordinate> center,
+        std::optional<QGeoPath> geopath,
+        double distance
     )
 : name(name)
 , date(date)
 , duration(duration)
 , fileInfo(fileInfo)
+, distance(distance)
 , center(center)
 , geopath(geopath)
 {
+}
+
+QGeoCoordinate GpxItem::getCenter() const
+{
+    this->loadPath();
+
+    return this->center.value();
+}
+QGeoPath GpxItem::getGeoPath() const
+{
+    this->loadPath();
+
+    return this->geopath.value();
 }
 
 /*static*/
@@ -64,7 +89,10 @@ std::optional<GpxItem> GpxItem::parseGpxFile(QFileInfo const & fileInfo)
         std::unique_ptr<gpx::GPX> root(parser.parse(stream));
 
         if (root == nullptr) {
-            qDebug() << "Parsing of " << fileInfo.absoluteFilePath() << " failed due to " << QString::fromStdString(parser.errorText()) << " on line " << parser.errorLineNumber() << " and column " << parser.errorColumnNumber();
+            qDebug() << "Parsing of " << fileInfo.absoluteFilePath()
+                << " failed due to " << QString::fromStdString(parser.errorText())
+                << " on line " << parser.errorLineNumber() << " and column "
+                << parser.errorColumnNumber();
         } else {
             name = QString::fromStdString(root->metadata().name().getValue());
             if (name.isEmpty() || name[0].isDigit()) {
@@ -136,8 +164,9 @@ std::optional<GpxItem> GpxItem::parseGpxFile(QFileInfo const & fileInfo)
                     date,
                     duration,
                     fileInfo,
-                    center,
-                    geopath
+                    std::make_optional(center),
+                    std::make_optional(geopath),
+                    geopath.length()
                 )
             );
 
@@ -165,9 +194,7 @@ std::optional<GpxItem> GpxItem::load(QFileInfo const & fileInfo, QSettings & set
 /*static*/
 std::optional<GpxItem> GpxItem::loadFromCache(QFileInfo const & fileInfo, QSettings & settings)
 {
-    return {};
-
-    QString cacheEntryKey = fileInfo.fileName();
+    QString cacheEntryKey = computeCacheKey(fileInfo);
 
     settings.beginGroup("cache");
     if (settings.childGroups().contains(cacheEntryKey)) {
@@ -176,12 +203,7 @@ std::optional<GpxItem> GpxItem::loadFromCache(QFileInfo const & fileInfo, QSetti
         QString name = settings.value("name").toString();
         QDate date = settings.value("date").toDate();
         QTime duration = settings.value("duration").toTime();
-        QPointF center = settings.value("center").value<QPointF>();
-        QList<QPointF> points = settings.value("geopath").value<QList<QPointF>>();
-        QList<QGeoCoordinate> path;
-        for (QPointF point: points) {
-            path.append(QGeoCoordinate(point.x(), point.y()));
-        }
+        double distance = settings.value("distance").toDouble();
 
         settings.endGroup();
         settings.endGroup();
@@ -192,8 +214,9 @@ std::optional<GpxItem> GpxItem::loadFromCache(QFileInfo const & fileInfo, QSetti
                     date,
                     duration,
                     fileInfo,
-                    QGeoCoordinate(center.x(), center.y()),
-                    QGeoPath(path)
+                    {},
+                    {},
+                    distance
                 )
             );
     } else {
@@ -205,15 +228,7 @@ std::optional<GpxItem> GpxItem::loadFromCache(QFileInfo const & fileInfo, QSetti
 /*static*/
 void GpxItem::saveToCache(GpxItem const & gpxItem, QSettings & settings)
 {
-    return;
-
-    QString cacheEntryKey = gpxItem.getFileInfo().fileName();
-
-    QPointF center(gpxItem.getCenter().latitude(), gpxItem.getCenter().longitude());
-    QList<QPointF> points;
-    for (QGeoCoordinate coordinate: gpxItem.getGeoPath().path()) {
-        points.append(QPointF(coordinate.latitude(), coordinate.longitude()));
-    }
+    QString cacheEntryKey = computeCacheKey(gpxItem.getFileInfo());
 
     settings.beginGroup("cache");
     settings.beginGroup(cacheEntryKey);
@@ -221,9 +236,23 @@ void GpxItem::saveToCache(GpxItem const & gpxItem, QSettings & settings)
     settings.setValue("name", gpxItem.getName());
     settings.setValue("date", gpxItem.getDate());
     settings.setValue("duration", gpxItem.getDuration());
-    settings.setValue("center", QVariant::fromValue(center));
-    settings.setValue("geopath", QVariant::fromValue(points));
+    settings.setValue("distance", gpxItem.getDistance());
 
     settings.endGroup();
     settings.endGroup();
+}
+
+void GpxItem::loadPath() const
+{
+    if (!this->center.has_value()) {
+        std::optional<GpxItem> item = GpxItem::parseGpxFile(this->fileInfo);
+        if (item.has_value()) {
+            this->center = item.value().center;
+            this->geopath = item.value().geopath;
+        } else {
+            qDebug() << "Failed to load path";
+        }
+    } else {
+        // Nothing do to
+    }
 }
