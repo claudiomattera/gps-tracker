@@ -1,0 +1,43 @@
+stages:
+  - configure
+  - lint
+  - build
+  - test
+  - documentation
+  - package
+
+
+before_script:
+  - apt-get update
+  - apt-get install -y qtbase5-dev qtdeclarative5-dev qtlocation5-dev qtpositioning5-dev libqt5charts5-dev qml-module-qtcharts
+  - apt-get install -y libexpat1-dev
+  - apt-get install -y cmake
+  - apt-get install -y build-essential
+  - apt-get install -y wget
+
+
+configure:cmake:
+  stage: configure
+  image: debian:buster
+  script:
+    - mkdir -p ./build
+    - pushd ./build/
+    - cmake ../source/
+    - popd
+  artifacts:
+    paths:
+      - './build/'
+
+
+build:make:
+  stage: build
+  image: debian:buster
+  script:
+    - pushd ./build/
+    - make VERBOSE=1
+    - popd
+  dependencies:
+    - configure:cmake
+  artifacts:
+    paths:
+      - './build/'

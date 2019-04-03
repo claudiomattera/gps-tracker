@@ -44,5 +44,6 @@ configure_file(
 )
 set(version_file "${CMAKE_CURRENT_BINARY_DIR}/application/version.cpp")
 
+add_subdirectory(gpxlib)
 add_subdirectory(verdigris)
 add_subdirectory(application)

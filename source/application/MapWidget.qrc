@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>MapWidget.qml</file>
+    </qresource>
+</RCC>
