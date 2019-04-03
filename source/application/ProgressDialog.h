@@ -23,7 +23,7 @@ class ProgressDialog: public QDialog
 
 public:
     explicit ProgressDialog(QList<QPointF> const & points, QWidget * parent = nullptr);
-    ~ProgressDialog();
+    ~ProgressDialog() override;
 
 private:
     Ui::ProgressDialog * ui;

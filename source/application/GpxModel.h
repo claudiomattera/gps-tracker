@@ -35,17 +35,17 @@ public:
 public:
     GpxModel(QDir const & directory);
 
-    virtual int columnCount(QModelIndex const & parent = QModelIndex()) const;
-    virtual QVariant data(QModelIndex const & index, int role = Qt::DisplayRole) const;
-    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    virtual int rowCount(QModelIndex const & parent = QModelIndex()) const;
+    virtual int columnCount(QModelIndex const & parent = QModelIndex()) const override;
+    virtual QVariant data(QModelIndex const & index, int role = Qt::DisplayRole) const override;
+    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    virtual int rowCount(QModelIndex const & parent = QModelIndex()) const override;
 
     void totalDistanceComputed(double totalDistance) const
     W_SIGNAL(totalDistanceComputed, totalDistance);
 
 protected:
-    bool canFetchMore(const QModelIndex & parent) const;
-    void fetchMore(const QModelIndex & parent);
+    virtual bool canFetchMore(const QModelIndex & parent) const override;
+    virtual void fetchMore(const QModelIndex & parent) override;
 
 private:
     QFileInfoList files;
