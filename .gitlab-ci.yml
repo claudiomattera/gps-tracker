@@ -9,7 +9,7 @@ stages:
 
 before_script:
   - apt-get update
-  - apt-get install -y qtbase5-dev qtdeclarative5-dev qtlocation5-dev qtpositioning5-dev qml-module-qtcharts
+  - apt-get install -y qtbase5-dev qtdeclarative5-dev qtlocation5-dev qtpositioning5-dev libqt5charts5-dev qml-module-qtcharts
   - apt-get install -y libexpat1-dev
   - apt-get install -y cmake
   - apt-get install -y build-essential
