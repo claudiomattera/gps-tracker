@@ -25,7 +25,7 @@ add_executable(
     GpxModel.cpp
     GpxItem.cpp
     PathController.cpp
-    places.qrc
+    MapWidget.qrc
     ${version_file}
 )
 

@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget * parent)
     engine->rootContext()->setContextProperty("pathController", this->pathController);
 
     QWidget *container = QWidget::createWindowContainer(quickView, this);
-    quickView->setSource(QUrl("qrc:///places.qml"));
+    quickView->setSource(QUrl("qrc:///MapWidget.qml"));
 
     QLayout * layout = this->ui->trackGroupBox->layout();
     if (layout == nullptr) {

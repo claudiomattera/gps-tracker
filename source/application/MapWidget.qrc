@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>places.qml</file>
+        <file>MapWidget.qml</file>
     </qresource>
 </RCC>
