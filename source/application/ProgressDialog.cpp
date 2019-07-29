@@ -20,16 +20,15 @@ namespace {
 
 void setupLineChart(
             QString const & title,
-            QtCharts::QLineSeries * & series,
-            QtCharts::QChart * & chart,
             QtCharts::QChartView * const & chartView,
             QList<QPointF> const & points,
             QWidget * parent
-        ) {
-    series = new QtCharts::QLineSeries(parent);
+        )
+{
+    QtCharts::QLineSeries * series = new QtCharts::QLineSeries(parent);
     series->append(points);
 
-    chart = new QtCharts::QChart();
+    QtCharts::QChart * chart = new QtCharts::QChart();
     chart->legend()->hide();
     chart->addSeries(series);
     chart->setTitle(title);
@@ -91,8 +90,6 @@ ProgressDialog::ProgressDialog(
 
     setupLineChart(
         "Progress over time",
-        this->cumulativeDailySeries,
-        this->cumulativeDailyChart,
         this->ui->cumulativeDailyView,
         cumulativeDailyPoints,
         this

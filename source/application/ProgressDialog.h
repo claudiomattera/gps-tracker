@@ -12,11 +12,6 @@ namespace Ui {
 class ProgressDialog;
 }
 
-namespace QtCharts {
-    class QLineSeries;
-    class QChart;
-}
-
 class ProgressDialog: public QDialog
 {
     W_OBJECT(ProgressDialog)
@@ -31,12 +26,6 @@ public:
 
 private:
     Ui::ProgressDialog * ui;
-
-    QtCharts::QLineSeries * cumulativeDailySeries;
-    QtCharts::QChart * cumulativeDailyChart;
-
-    QtCharts::QLineSeries * monthlySeries;
-    QtCharts::QChart * monthlyChart;
 };
 
 #endif // APPLICATION_PROGRESSDIALOG_H
