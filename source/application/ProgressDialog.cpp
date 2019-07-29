@@ -6,14 +6,19 @@
 
 #include <cmath>
 
+#include <QDateTime>
+
+#include <QBarCategoryAxis>
+#include <QBarSeries>
 #include <QLineSeries>
 #include <QChart>
+#include <QBarSet>
 #include <QDateTimeAxis>
 #include <QValueAxis>
 
 namespace {
 
-void setupChart(
+void setupLineChart(
             QString const & title,
             QtCharts::QLineSeries * & series,
             QtCharts::QChart * & chart,
@@ -45,6 +50,31 @@ void setupChart(
     series->attachAxis(axisY);
 }
 
+void setupBarChart(
+            QList<QPointF> const & points,
+            QtCharts::QChartView * const & chartView
+        )
+{
+    QStringList categories;
+    QtCharts::QBarSeries * series = new QtCharts::QBarSeries();
+    QtCharts::QBarSet * barSet = new QtCharts::QBarSet("Monthly");
+    for (QPointF point: points) {
+        QDateTime datetime = QDateTime::fromMSecsSinceEpoch(point.x());
+        *barSet << point.y();
+        categories << datetime.toString("yyyy-MM");
+        series->append(barSet);
+    }
+
+    QtCharts::QChart * chart = new QtCharts::QChart();
+    chart->addSeries(series);
+    chartView->setChart(chart);
+
+    QtCharts::QBarCategoryAxis *axisX = new QtCharts::QBarCategoryAxis();
+    axisX->append(categories);
+    chart->addAxis(axisX, Qt::AlignBottom);
+    series->attachAxis(axisX);
+}
+
 } // unnamed namespace
 
 W_OBJECT_IMPL(ProgressDialog)
@@ -59,7 +89,7 @@ ProgressDialog::ProgressDialog(
 {
     this->ui->setupUi(this);
 
-    setupChart(
+    setupLineChart(
         "Progress over time",
         this->cumulativeDailySeries,
         this->cumulativeDailyChart,
@@ -68,14 +98,7 @@ ProgressDialog::ProgressDialog(
         this
     );
 
-    setupChart(
-        "Monthly aggregate",
-        this->monthlySeries,
-        this->monthlyChart,
-        this->ui->monthlyView,
-        monthlyPoints,
-        this
-    );
+    setupBarChart(monthlyPoints, this->ui->monthlyView);
 }
 
 ProgressDialog::~ProgressDialog()
