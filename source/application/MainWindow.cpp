@@ -28,6 +28,58 @@
 #include "PathController.h"
 #include "ProgressDialog.h"
 
+namespace {
+
+bool sameDayPredicate(QDateTime const & first, QDateTime const & second) {
+    return first.date() == second.date();
+}
+
+bool sameWeekPredicate(QDateTime const & first, QDateTime const & second) {
+    return
+        first.date().year() == second.date().year()
+        && first.date().weekNumber() == second.date().weekNumber();
+}
+
+bool sameMonthPredicate(QDateTime const & first, QDateTime const & second) {
+    return
+        first.date().year() == second.date().year()
+        && first.date().month() == second.date().month();
+}
+
+QList<QPointF> groupByPredicate(
+            QList<QPointF> const & original,
+            std::function<bool(QDateTime const&, QDateTime const&)> predicate
+        ) {
+    return std::accumulate(
+        std::begin(original),
+        std::end(original),
+        QList<QPointF>({original.first()}),
+        [&predicate](QList<QPointF> & grouped, QPointF point) {
+            QDateTime const lastDatetime = QDateTime::fromMSecsSinceEpoch(grouped.last().x());
+            QDateTime const nextDatetime = QDateTime::fromMSecsSinceEpoch(point.x());
+            if (predicate(lastDatetime, nextDatetime)) {
+                grouped.last().ry() += point.y();
+            } else {
+                grouped.append(point);
+            }
+            return grouped;
+        });
+}
+
+QList<QPointF> cumulate(QList<QPointF> const & original) {
+    return std::accumulate(
+        std::begin(original) + 1,
+        std::end(original),
+        QList<QPointF>({original.first()}),
+        [](QList<QPointF> & cumulative, QPointF point) {
+            double const last = cumulative.last().y();
+            cumulative.append(QPointF(point.x(), point.y() + last));
+            return cumulative;
+        });
+}
+
+} // unnamed namespace
+
 W_OBJECT_IMPL(MainWindow)
 
 MainWindow::MainWindow(QWidget * parent)
@@ -115,17 +167,12 @@ void MainWindow::on_progressChartAction_triggered()
             return a.x() < b.x();
         });
 
-    QList<QPointF> cumulativePoints = std::accumulate(
-        std::begin(points) + 1,
-        std::end(points),
-        QList<QPointF>({points.first()}),
-        [](QList<QPointF> & cumulative, QPointF point) {
-            double const last = cumulative.last().y();
-            cumulative.append(QPointF(point.x(), point.y() + last));
-            return cumulative;
-        });
+    QList<QPointF> dailyPoints = groupByPredicate(points, sameDayPredicate);
+    QList<QPointF> monthlyPoints = groupByPredicate(points, sameMonthPredicate);
 
-    ProgressDialog progressDialog(cumulativePoints, this);
+    QList<QPointF> cumulativeDailyPoints = cumulate(dailyPoints);
+
+    ProgressDialog progressDialog(cumulativeDailyPoints, monthlyPoints, this);
     progressDialog.exec();
 }
 
