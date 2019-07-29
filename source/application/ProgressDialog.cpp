@@ -50,13 +50,14 @@ void setupLineChart(
 }
 
 void setupBarChart(
+            QString const & title,
             QList<QPointF> const & points,
             QtCharts::QChartView * const & chartView
         )
 {
     QStringList categories;
     QtCharts::QBarSeries * series = new QtCharts::QBarSeries();
-    QtCharts::QBarSet * barSet = new QtCharts::QBarSet("Monthly");
+    QtCharts::QBarSet * barSet = new QtCharts::QBarSet("");
     for (QPointF point: points) {
         QDateTime datetime = QDateTime::fromMSecsSinceEpoch(point.x());
         *barSet << point.y();
@@ -66,6 +67,7 @@ void setupBarChart(
 
     QtCharts::QChart * chart = new QtCharts::QChart();
     chart->addSeries(series);
+    chart->setTitle(title);
     chartView->setChart(chart);
 
     QtCharts::QBarCategoryAxis *axisX = new QtCharts::QBarCategoryAxis();
@@ -95,7 +97,7 @@ ProgressDialog::ProgressDialog(
         this
     );
 
-    setupBarChart(monthlyPoints, this->ui->monthlyView);
+    setupBarChart("Monthly aggregate", monthlyPoints, this->ui->monthlyView);
 }
 
 ProgressDialog::~ProgressDialog()
