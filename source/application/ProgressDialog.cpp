@@ -97,7 +97,16 @@ ProgressDialog::ProgressDialog(
         this
     );
 
+#if false
     setupBarChart("Monthly aggregate", monthlyPoints, this->ui->monthlyView);
+#else
+    setupLineChart(
+        "Monthly aggregate",
+        this->ui->monthlyView,
+        monthlyPoints,
+        this
+    );
+#endif
 }
 
 ProgressDialog::~ProgressDialog()
