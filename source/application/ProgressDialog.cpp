@@ -14,6 +14,7 @@
 namespace {
 
 void setupChart(
+            QString const & title,
             QtCharts::QLineSeries * & series,
             QtCharts::QChart * & chart,
             QtCharts::QChartView * const & chartView,
@@ -26,7 +27,7 @@ void setupChart(
     chart = new QtCharts::QChart();
     chart->legend()->hide();
     chart->addSeries(series);
-    chart->setTitle("Progress over time");
+    chart->setTitle(title);
 
     chartView->setChart(chart);
 
@@ -57,6 +58,7 @@ ProgressDialog::ProgressDialog(
     this->ui->setupUi(this);
 
     setupChart(
+        "Progress over time",
         this->cumulativeDailySeries,
         this->cumulativeDailyChart,
         this->ui->cumulativeDailyView,
@@ -65,6 +67,7 @@ ProgressDialog::ProgressDialog(
     );
 
     setupChart(
+        "Monthly aggregate",
         this->monthlySeries,
         this->monthlyChart,
         this->ui->monthlyView,
