@@ -33,14 +33,16 @@ void setupChart(
 
     QtCharts::QDateTimeAxis * axisX = new QtCharts::QDateTimeAxis(parent);
     axisX->setFormat("MMM yyyy");
-    chartView->chart()->setAxisX(axisX, series);
+    chartView->chart()->addAxis(axisX, Qt::AlignBottom);
+    series->attachAxis(axisX);
 
     double const maxY = points.last().y();
     QtCharts::QValueAxis * axisY = new QtCharts::QValueAxis(parent);
     axisY->setRange(0, 1000 * std::ceil(maxY / 1000));
     axisY->setLabelFormat("%.0f km");
     axisY->applyNiceNumbers();
-    chartView->chart()->setAxisY(axisY, series);
+    chartView->chart()->addAxis(axisY, Qt::AlignLeft);
+    series->attachAxis(axisY);
 }
 
 } // unnamed namespace
