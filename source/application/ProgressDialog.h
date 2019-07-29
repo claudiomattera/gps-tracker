@@ -22,14 +22,21 @@ class ProgressDialog: public QDialog
     W_OBJECT(ProgressDialog)
 
 public:
-    explicit ProgressDialog(QList<QPointF> const & points, QWidget * parent = nullptr);
+    explicit ProgressDialog(
+            QList<QPointF> const & cumulativeDailyPoints,
+            QList<QPointF> const & monthlyPoints,
+            QWidget * parent = nullptr
+        );
     ~ProgressDialog() override;
 
 private:
     Ui::ProgressDialog * ui;
 
-    QtCharts::QLineSeries * series;
-    QtCharts::QChart * chart;
+    QtCharts::QLineSeries * cumulativeDailySeries;
+    QtCharts::QChart * cumulativeDailyChart;
+
+    QtCharts::QLineSeries * monthlySeries;
+    QtCharts::QChart * monthlyChart;
 };
 
 #endif // APPLICATION_PROGRESSDIALOG_H

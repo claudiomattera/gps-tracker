@@ -15,7 +15,10 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QtCharts::QChartView" name="chartView"/>
+    <widget class="QtCharts::QChartView" name="cumulativeDailyView"/>
+   </item>
+   <item>
+    <widget class="QtCharts::QChartView" name="monthlyView"/>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
